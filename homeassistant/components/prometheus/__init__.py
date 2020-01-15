@@ -285,7 +285,8 @@ class PrometheusMetrics:
             metric.labels(**self._labels(state)).set(current_temp)
 
     def _handle_sensor(self, state):
-        unit = self._unit_string(state.attributes.get(ATTR_UNIT_OF_MEASUREMENT))
+        attribute_unit = state.attributes.get(ATTR_UNIT_OF_MEASUREMENT)
+        unit = self._unit_string(attribute_unit)
 
         for metric_handler in self._sensor_metric_handlers:
             metric = metric_handler(state, unit)
@@ -299,7 +300,7 @@ class PrometheusMetrics:
 
             try:
                 value = self.state_as_number(state)
-                if unit == TEMP_FAHRENHEIT:
+                if attribute_unit == TEMP_FAHRENHEIT:
                     value = fahrenheit_to_celsius(value)
                 _metric.labels(**self._labels(state)).set(value)
             except ValueError:
